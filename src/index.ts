@@ -1,24 +1,23 @@
-import { Scheduler } from './Scheduler';
-import { BarometricPressureSensor } from './barometric-pressure-sensor';
-import { MonitoringScreen } from './monitoring-screen';
-import { NimbusScheduler } from './nimbus-scheduler';
-import { TemperatureSensor } from './temperature-sensor';
+import { BarometricPressureSensor } from './pressure/barometric-pressure-sensor';
+import { MonitoringScreen } from './monitoring-screen/monitoring-screen';
+import { AlarmClock } from './alarm-clock/alarm-clock';
+import { TemperatureSensor } from './temperature/temperature-sensor';
+import { BarometricPressureTrendSensor } from './pressure/barometric-pressure-trend-sensor';
 
 const main = () => {
-  const temperatureSensor = new TemperatureSensor();
-  const barometricPressureSensor = new BarometricPressureSensor();
+  const alarmClock: AlarmClock = new AlarmClock();
+  const barometricPressureSensor = new BarometricPressureSensor(alarmClock);
+  const barometricPressureTrendSensor = new BarometricPressureTrendSensor(
+    barometricPressureSensor,
+    alarmClock,
+  );
+  const temperatureSensor = new TemperatureSensor(alarmClock);
 
-  const monitoringScreen = new MonitoringScreen();
-
-  const scheduler: Scheduler = new NimbusScheduler(
+  new MonitoringScreen(
     temperatureSensor,
     barometricPressureSensor,
-    monitoringScreen,
+    barometricPressureTrendSensor,
   );
-
-  setInterval(() => {
-    scheduler.tic();
-  }, 1000);
 };
 
 main();
